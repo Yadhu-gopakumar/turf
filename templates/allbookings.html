@@ -65,7 +65,8 @@
         <div style="text-align: center;" class="my-2">Your Bookings</div>
 
         {% for i in allbookings reversed %}
-        {{i.booking_date}}
+       
+          {{ i.booking_date|date:"Y-m-d H:i A" }}
         <div class="row justify-content-center mb-3 ">
 
 
@@ -172,13 +173,6 @@
 
     </div>
 
-
-
-    <!-- <iframe
-        src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3933.970133926544!2d76.61323807382871!3d9.597839990488014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zOcKwMzUnNTIuMiJOIDc2wrAzNic1Ni45IkU!5e0!3m2!1sen!2sin!4v1730377507448!5m2!1sen!2sin"
-        width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"></iframe>
- -->
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
         crossorigin="anonymous"></script>

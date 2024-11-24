@@ -5,26 +5,18 @@ from turfowner.models import turf_table
 from django.contrib.auth.models import User
 
 
-import json
-from datetime import time, timedelta
-
 class BookingSlotTable(models.Model):
     turf = models.ForeignKey(turf_table, on_delete=models.CASCADE)
     booking_date = models.TimeField(auto_now_add=True)
     slots = models.JSONField(null=True,default=list)
     expired = models.BooleanField(default=False)
-
-
-
     class Meta:
         unique_together = ['turf', 'booking_date']
- 
-
-  
 
 
 class UserBookingTable(models.Model):
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    name=models.CharField(max_length=100,null=True)
     turfname = models.ForeignKey(turf_table, on_delete=models.CASCADE)
     slots = models.JSONField(default=list,null=True)
     amount = models.IntegerField()

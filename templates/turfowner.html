@@ -56,6 +56,8 @@
       {% endif %}
 
     </nav>
+    <marquee behavior="" direction="">Turfowner Page | manage your turfs | manage your Bookings</marquee>
+    
     <div class="section__container header__container" id="home">
 
       <h1>Game On<br />Reserve Your <span>Ground Now</span>.</h1>
@@ -78,25 +80,7 @@
     </form>
   </section>
 
-  <section class="section__container room__container">
-    <p class="section__subheader">Latest turfs</p>
-    <h2 class="section__header">The Most Memorable Time Starts Here.</h2>
-    <div class="turf__grid">
-      {% for i in latest_turfs %}
-      <div class="turf__card">
-        <div class="turf__card__image">
-          <img src="{{i.image.url}}" alt="turf" style="height: 200px;" />
-        </div>
-        <div class="turf__card__details">
-          <h4>{{i.name}}</h4>
-          <p>{{i.discription}} </p>
-          <h5>Starting from <span>{{i.rent}} /hour</span></h5>
-          <a href="#bookingsofturf"><button class="btn">View Details</button></a>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-  </section>
+
   <section class="section__container about__container" id="about">
     <div class="about__image">
       <img src="{% static 'tr.jpg'%}" alt="about" />
@@ -120,9 +104,8 @@
     <div class="section__container footer__container">
       <div class="footer__col">
         <div class="logo">
-          <a href="{% url 'userhome' %}"><img
-              src="https://playo.co/_next/image?url=https%3A%2F%2Fplayo-website.gumlet.io%2Fplayo-website-v2%2Flogos-icons%2Fnew-logo-playo.png%3Fq%3D50&w=1920&q=75"
-              alt="logo" /></a>
+          <a href="{% url 'userhome' %}"><img src="{% static 'logo.png' %}" alt="logo"
+            style="width: 200px;" /></a>
         </div>
         <p class="section__description">
           Sport Zone revolutionizes turf booking by offering a seamless,

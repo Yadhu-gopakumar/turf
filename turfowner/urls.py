@@ -13,6 +13,5 @@ urlpatterns = [
     path('addreview/<int:id>/',views.addreview,name='addreview'),
     path('played/<str:start_time>/<int:bid>/<str:user_id>/',views.playedstatus,name='playedstatus')
 
-    
 
 ]

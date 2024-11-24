@@ -1,11 +1,12 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from django.http import JsonResponse
+
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-
+from django.utils.dateformat import format
 from .form import turfForm
 from .models import turf_table,reviewtable
 from booking.models import BookingSlotTable as BookingSlot,UserBookingTable
+from datetime import datetime, timedelta
 
 # Create your views here.
 
@@ -20,8 +21,7 @@ def ownersearchturf(request):
     context={'turfs':userturf}
     if 'query' in request.GET:
         q=request.GET['query']
-        # uname=User.objects.filter(username__icontains=q)
-
+   
         res=turf_table.objects.filter(name__icontains=q) | turf_table.objects.filter(location__icontains=q) and turf_table.objects.filter(ownername=request.user) 
    
         if res is not None:
@@ -110,29 +110,6 @@ def delete_slots(turf):
     BookingSlot.objects.filter(turf=turf, expired=False).all().update(expired=True)
 
 
-# def create_new_slots(turf):
-#     slots = []
-#     start_time = datetime.combine(datetime.today(), datetime.strptime("09:00", "%H:%M").time())
-#     # Generate 12 hourly slots
-#     for i in range(12):
-#         end_time = start_time + timedelta(hours=1)
-#         slots.append({
-#             "start_time": start_time.strftime("%H:%M"),
-#             "end_time": end_time.strftime("%H:%M"),
-#             "status": "available" if start_time > datetime.now() else "overdued"
-#         })
-     
-#         start_time = end_time 
-#     available_slots = [slot for slot in slots if slot["status"] == "available"]
-
-#     # Update turf based on slot availability
-#     turf.slots = bool(available_slots)
-#     turf.closed = False
-#     turf.save()
-
-#     # Create a new BookingSlot object
-#     BookingSlot.objects.create(turf=turf, slots=slots)
-from datetime import datetime, timedelta
 
 def create_new_slots(turf):
     slots = []
@@ -172,7 +149,6 @@ def create_new_slots(turf):
     BookingSlot.objects.create(turf=turf, slots=slots)
 
 
-from django.shortcuts import get_object_or_404, redirect
 
 def changeslots(request, id):
     turf = get_object_or_404(turf_table, id=id)
@@ -221,8 +197,6 @@ def addreview(request,id):
     if(all_slots_unavailable):
         t.slots=False
         t.save()  
-       
-
         
     context = {
         'turf': t,
@@ -239,15 +213,27 @@ def addreview(request,id):
    
 
 def turfbookings(request,id):
-    pass
+    turf=turf_table.objects.get(id=id)
+    turfbookings=BookingSlot.objects.filter(turf=turf,expired=False).first()
 
+    # for booking in turfbookings:
+    #     if isinstance(booking.booking_date, time):  # Fix the type check
+    turfbookings.booking_date = datetime.combine(date.today(), turfbookings.booking_date)
+    print(turfbookings.booking_date)
+    return render (request,'turfbookings.html',{'turfbookings':turfbookings})
+
+from datetime import datetime, date,time
 
 def allbookings(request):
     allbookings=BookingSlot.objects.filter(turf__ownername=request.user).all()
+
+    for booking in allbookings:
+        if isinstance(booking.booking_date, time):  # Fix the type check
+            booking.booking_date = datetime.combine(date.today(), booking.booking_date)
+            
     return render (request,'allbookings.html',{'allbookings':allbookings})
 
 
-from django.http import JsonResponse  # Add this import
 def playedstatus(request, start_time, bid, user_id):
     try:
         # Fetch the booking slot by ID

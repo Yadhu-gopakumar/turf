@@ -694,6 +694,10 @@
               </span>
             
               {% else %}
+              <a href="{% url 'download_ticket' i.id %}" class="btn btn-primary">
+                Download Ticket
+            </a>
+            
               <a href="{% url 'cancelbooking' i.id i.turfname.id %}">
                 <button class="btn btn-danger" style="background-color: rgb(255, 48, 48);width: 100%;">Cancel
                   Booking</button>

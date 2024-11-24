@@ -1,13 +1,7 @@
-from django.shortcuts import render,redirect,get_object_or_404
-from django.http import HttpResponse
+from django.shortcuts import render,get_object_or_404
 from .models import BookingSlotTable as BookingSlot
 from .models import UserBookingTable as userBooking
 from turfowner.models import turf_table
-from django.utils import timezone
-# Create your views here.
-from django.contrib import messages
-
-from datetime import datetime,time,timedelta
 
 
 
@@ -32,7 +26,6 @@ def bookslots(request, id):
                 if slot['start_time'] in selected_slots and slot['status'] == "available":
                     
 
-                    # Update slot status to booked
                     slot['status'] = "booked"
                     slot['user']=request.user.username
 
@@ -51,7 +44,7 @@ def bookslots(request, id):
             amount = len(booked_slots) * int(turf.rent)
 
             # Create a user booking record
-            userBooking.objects.create(
+            bid=userBooking.objects.create(
                 turfname=turf,
                 customer=request.user,
                 slots=booked_slots,
@@ -63,7 +56,8 @@ def bookslots(request, id):
             booking_slot_table.save()
 
             context = {
-                'amount': amount
+                'amount': amount,
+                'bid':bid.id
             }
 
             # Return a success response
@@ -76,6 +70,20 @@ def userbookings(request):
 
     return render(request,'mybooking.html',{'bookings':bookings})
 
+
+def addname(request,bid):
+    bookings=userBooking.objects.get(id=bid)
+
+    if request.method=='POST':
+        name=request.POST['name']
+
+        bookings.name=name
+        bookings.save()
+
+        
+        booking=userBooking.objects.filter(customer=request.user).all()
+  
+        return render(request,'mybooking.html',{'bookings':booking}) 
 
 
 def cancelbooking(request, tid, bid):

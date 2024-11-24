@@ -111,29 +111,12 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en-us'
 
 
-
-# USE_I18N = True
-
-# USE_TZ = True
-
-
-# TIME_ZONE = 'Asia/Kolkata'
-
 # from django.utils import timezone
-# print(timezone.now().time()) 
-# # TIME_ZONE =  'Asia/Kolkata'
-
-# USE_I18N = True
-
-# USE_L10N = True
-
-# USE_TZ = True
-
 
 # settings.py
 
 # Set the Indian timezone
-# TIME_ZONE = 'Asia/Kolkata'
+TIME_ZONE = 'Asia/Kolkata'
 
 # Enable timezone support
 USE_TZ = True

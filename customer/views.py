@@ -1,11 +1,10 @@
 from django.utils import timezone
-from django.shortcuts import render,get_object_or_404,redirect
+from django.shortcuts import render,get_object_or_404
 from turfowner.models import turf_table
-from booking.models import BookingSlotTable as  BookingSlot
-from turfowner.models import reviewtable
+from booking.models import BookingSlotTable as  BookingSlot,UserBookingTable
 from django.contrib.auth.decorators import login_required
-from datetime import datetime
-from django.utils.timezone import now
+
+
 # Create your views here.
 login_required(login_url='userlogin')
 def userhome(request):
@@ -24,8 +23,6 @@ def searchturf(request):
    
     if 'query' in request.GET:
         q=request.GET['query']
-        # uname=User.objects.filter(username__icontains=q)
-
         res=turf_table.objects.filter(name__icontains=q) | turf_table.objects.filter(location__icontains=q) 
    
         if res is not None:
@@ -38,13 +35,6 @@ def searchturf(request):
                 }  
         return render(request,'viewturflist.html',context)
     
-
-
-def turfdetails(request, id):
-    turf = turf_table.objects.get(id=id)
-    rdata=reviewtable.objects.filter(turf=turf)
-    
-    return render(request, 'turfdetails.html', {'turf': turf, 'slots': turf.slots,'rdata':rdata})
 
 
 @login_required
@@ -83,7 +73,7 @@ def available_slots(request, turf_id):
     except BookingSlot.DoesNotExist:
         context = {
             'turf': turf,
-            'slots': None,  # No slots available
+            'slots': None, 
             'all_slots_unavailable': True,  # Set the flag to True if no slots exist
             'all_booked': True,  # If no slots exist, assume all are booked
         }
@@ -91,8 +81,42 @@ def available_slots(request, turf_id):
     return render(request, 'turfdetails.html', context)
 
 
+from django.http import HttpResponse
+from weasyprint import HTML
+from django.template.loader import render_to_string
+
+def download_ticket(request, booking_id):
+    # Fetch booking details
+    booking = UserBookingTable.objects.get(id=booking_id)
+    turf = turf_table.objects.get(name=booking.turfname.name)
+    image_url = turf.image.url
+    context = {
+        'booking': booking,
+        'date': booking.booking_date,
+        'user': booking.name,
+        'turf_name': booking.turfname,
+        'price': booking.amount,
+        'image':image_url
+    }
+    
+    # Render the ticket template to HTML
+    html_string = render_to_string('ticket_template.html', context)
+
+    # Define custom ticket size (in mm for example)
+    ticket_size = (105, 148)  # A6 size (in mm) or custom size (width x height)
+
+    # Convert the HTML string to PDF with custom size
+    pdf = HTML(string=html_string).write_pdf(stylesheets=None, presentational_hints=True, 
+                                              size=ticket_size)  # Specify size here
+
+    # Create the HTTP response with the PDF file as content
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="ticket_{booking_id}.pdf"'
+
+    return response
 
 
  
 def userbookings(request):
     pass 
+
