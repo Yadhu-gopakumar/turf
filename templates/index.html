@@ -100,7 +100,11 @@
           <h4>{{i.name}}</h4>
           <p>{{i.discription}} </p>
           <h5>Starting from <span>{{i.rent}} /hour</span></h5>
-          <a href="{% url 'available_slots' i.id %}"><button class="btn">View Details</button></a>
+           {% if request.user.username %}
+          <a href="{% url 'userlogin' %}"><button class="btn">View Details</button></a>
+          {% else %}
+           <a href="{% url 'available_slots' i.id %}"><button class="btn">View Details</button></a>
+          {% endif %}
         </div>
       </div>
       {% endfor %}
